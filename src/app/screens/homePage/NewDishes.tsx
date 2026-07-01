@@ -9,10 +9,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Divider from "../../components/divider";
 
 const newDishes = [
-  { productName: "Cutlet", imagePath: "/img/cutlet2.webp" },
+  { productName: "Cutlet", imagePath: "/img/cutlet.webp" },
   { productName: "Kebab", imagePath: "/img/kebab-fresh.webp" },
-  { productName: "Kebab", imagePath: "/img/kebab3.webp" },
-  { productName: "Doner", imagePath: "/img/doner.webp" },
+  { productName: "Kebab", imagePath: "/img/kebab.webp" },
+  { productName: "Lavash", imagePath: "/img/lavash.webp" },
 ];
 
 export default function NewDishes() {

@@ -17,15 +17,15 @@ export default function Footer() {
   return (
     <Footers>
       <Container>
-        <Stack direction={"row"} sx={{ mt: "94px" }}>
-          <Stack direction={"column"} sx={{ width: "340px" }}>
+        <Stack flexDirection={"row"} sx={{ mt: "94px" }}>
+          <Stack flexDirection={"column"} style={{ width: "340px" }}>
             <Box>
-              <img width={"100px"} src={"/icons/burak.svg"} />
+              <img width={"100px"} src={"/icons/bumarak.svg"} />
             </Box>
             <Box className={"foot-desc-txt"}>
               Focusing on the gourmet Turkish breakfast as well as the youth
-              society, CZN Burak Gurme aims to bring Turkish cuisine back. CZN
-              Burak Gurme creates an illusion with its cuisine.
+              society, ZEN Bumarak Gurme aims to bring Turkish cuisine back. ZEN
+              Bumarak Gurme creates an illusion with its cuisine.
             </Box>
             <Box className="sns-context">
               <img src={"/icons/facebook.svg"} />
@@ -34,7 +34,7 @@ export default function Footer() {
               <img src={"/icons/youtube.svg"} />
             </Box>
           </Stack>
-          <Stack sx={{ ml: "288px" }} direction={"row"}>
+          <Stack sx={{ ml: "288px" }} flexDirection={"row"}>
             <Stack>
               <Box>
                 <Box className={"foot-category-title"}>Bo'limlar</Box>
@@ -50,18 +50,12 @@ export default function Footer() {
               <Box>
                 <Box className={"foot-category-title"}>Find us</Box>
                 <Box
+                  flexDirection={"column"}
+                  sx={{ mt: "20px" }}
                   className={"foot-category-link"}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    mt: "20px",
-                  }}
+                  justifyContent={"space-between"}
                 >
-                  <Box
-                    className={"find-us"}
-                    sx={{ display: "flex", flexDirection: "row" }}
-                  >
+                  <Box flexDirection={"row"} className={"find-us"}>
                     <span>L.</span>
                     <div>Downtown, Dubai</div>
                   </Box>
@@ -83,8 +77,8 @@ export default function Footer() {
           </Stack>
         </Stack>
         <Stack
-          sx={{ mt: "80px" }}
           style={{ border: "1px solid #C5C8C9", width: "100%", opacity: "0.2" }}
+          sx={{ mt: "80px" }}
         ></Stack>
         <Stack className={"copyright-txt"}>
           © Copyright Devex Global, All rights reserved.
