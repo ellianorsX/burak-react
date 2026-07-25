@@ -61,10 +61,11 @@ export default function ChosenProduct() {
 
     const member = new MemberService();
     member
-      .getRestaurants()
+      .getRestaurant()
       .then((data) => setRestaurant(data))
       .catch((err) => console.log(err));
   }, []);
+  console.log("restaurant:", restaurant);
 
   if (!chosenProducts) return null;
   return (
