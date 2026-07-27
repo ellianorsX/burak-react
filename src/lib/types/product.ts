@@ -5,6 +5,7 @@ import {
 } from "../enums/product.enum";
 
 export interface Product {
+  imagePath: any;
   Collection: any;
   _id: string;
   productStatus: ProductStatus;
