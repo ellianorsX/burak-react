@@ -120,7 +120,7 @@ export default function Basket(props: BasketProps) {
                       />
                     </div>
                     <img src={imagePath} className={"product-img"} />
-                    <span className={"product-name"}>{item.image}</span>
+                    <span className={"product-name"}>{item.name}</span>
                     <p className={"product-price"}>
                       ${item.price}x {item.quantity}
                     </p>
