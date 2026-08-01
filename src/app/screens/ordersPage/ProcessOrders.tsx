@@ -6,20 +6,55 @@ import moment from "moment";
 
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { retrievePausedOrders } from "./selector";
+import { retrieveProcessOrders } from "./selector";
 import { Product } from "../../../lib/types/product";
-import { serverApi } from "../../../lib/config";
-import { Order, OrderItem } from "../../../lib/types/order";
+import { Messages, serverApi } from "../../../lib/config";
+import { Order, OrderItem, OrderUpdateInput } from "../../../lib/types/order";
+import { useGlobals } from "../../hooks/useGlobals";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import OrderService from "../../services/OrderService";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import { T } from "../../../lib/types/common";
 
 /** REDUX SLICE & SELECTOR */
-
 const processOrdersRetriever = createSelector(
-  retrievePausedOrders,
+  retrieveProcessOrders,
   (processOrders) => ({ processOrders }),
 );
 
-export default function ProcessOrders() {
+interface ProcessOrdersProps {
+  setValue: (value: string) => void;
+}
+
+export default function ProcessOrders(props: ProcessOrdersProps) {
+  const { setValue } = props;
+  const { authMember, setOrderBuilder } = useGlobals();
   const { processOrders } = useSelector(processOrdersRetriever);
+
+  /** HANDLERS **/
+
+  const finishOrderHandler = async (e: T) => {
+    try {
+      if (!authMember) throw new Error(Messages.error2);
+
+      const orderId = e.target.value;
+      const input: OrderUpdateInput = {
+        orderId: orderId,
+        orderStatus: OrderStatus.FINISH,
+      };
+
+      const confirmation = window.confirm("Have you received your order?");
+      if (confirmation) {
+        const order = new OrderService();
+        await order.updateOrder(input);
+        setValue("3");
+        setOrderBuilder(new Date());
+      }
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
 
   return (
     <TabPanel value={"2"}>
@@ -28,23 +63,28 @@ export default function ProcessOrders() {
           return (
             <Box key={order._id} className={"order-main-box"}>
               <Box className={"order-box-scroll"}>
-                {order.orderItems?.map((item: OrderItem, index2: number) => {
-                  const product: Product = order.productData.find(
+                {order.orderItems?.map((item: OrderItem) => {
+                  const product: Product | undefined = order.productData.find(
                     (ele: Product) => item.productId === ele._id,
                   );
-
                   const imagePath = `${serverApi}/${product?.productImages[0]}`;
 
                   return (
                     <Box key={item._id} className={"orders-name-price"}>
-                      <img src={imagePath} className={"order-dish-img"} />
+                      <img
+                        src={imagePath}
+                        className={"order-dish-img"}
+                        alt=""
+                      />
                       <p className={"title-dish"}>{product?.productName}</p>
                       <Box className={"price-box"}>
                         <p>${item.itemPrice}</p>
-                        <img src={"/icons/close.svg"} />
+                        <img src={"/icons/close.svg"} alt="" />
                         <p>{item.itemQuantity}</p>
-                        <img src={"/icons/pause.svg"} />
-                        <p style={{ marginLeft: "15px" }}>$22</p>
+                        <img src={"/icons/pause.svg"} alt="" />
+                        <p style={{ marginLeft: "15px" }}>
+                          ${item.itemPrice * item.itemQuantity}
+                        </p>
                       </Box>
                     </Box>
                   );
@@ -55,20 +95,30 @@ export default function ProcessOrders() {
                 <Box className={"box-total"}>
                   <p>Product price</p>
                   <p>${order.orderTotal - order.orderDelivery}</p>
-                  <img src={"/icons/plus.svg"} style={{ marginLeft: "20px" }} />
-                  <p>delivery cost</p>
+                  <img
+                    src={"/icons/plus.svg"}
+                    style={{ marginLeft: "20px" }}
+                    alt=""
+                  />
+                  <p>Delivery cost</p>
                   <p>${order.orderDelivery}</p>
                   <img
                     src={"/icons/pause.svg"}
                     style={{ marginLeft: "20px" }}
+                    alt=""
                   />
                   <p>Total</p>
                   <p>${order.orderTotal}</p>
                 </Box>
                 <p className={"data-compl"}>
-                  {moment().format("YY-MM-DD HH:mm")}
+                  {moment(order.updatedAt).format("YY-MM-DD HH:mm")}
                 </p>
-                <Button variant="contained" className={"verify-button"}>
+                <Button
+                  value={order._id}
+                  onClick={finishOrderHandler}
+                  variant="contained"
+                  className={"verify-button"}
+                >
                   Verify to Fulfil
                 </Button>
               </Box>
@@ -76,19 +126,15 @@ export default function ProcessOrders() {
           );
         })}
 
-        {!processOrders ||
-          (processOrders.length === 0 && (
-            <Box
-              display={"flex"}
-              flexDirection={"row"}
-              justifyContent={"center"}
-            >
-              <img
-                src={"/icons/noimage-list.svg"}
-                style={{ width: 300, height: 300 }}
-              />
-            </Box>
-          ))}
+        {(!processOrders || processOrders.length === 0) && (
+          <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
+            <img
+              src={"/icons/noimage-list.svg"}
+              style={{ width: 300, height: 300 }}
+              alt=""
+            />
+          </Box>
+        )}
       </Stack>
     </TabPanel>
   );

@@ -4,15 +4,14 @@ import TabPanel from "@mui/lab/TabPanel";
 
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { retrievePausedOrders } from "./selector";
+import { retrieveFinishedOrders } from "./selector";
 import { Product } from "../../../lib/types/product";
 import { serverApi } from "../../../lib/config";
 import { Order, OrderItem } from "../../../lib/types/order";
 
 /** REDUX SLICE & SELECTOR */
-
 const finishedOrdersRetriever = createSelector(
-  retrievePausedOrders,
+  retrieveFinishedOrders,
   (finishedOrders) => ({ finishedOrders }),
 );
 
@@ -26,19 +25,25 @@ export default function FinishedOrders() {
           return (
             <Box key={order._id} className={"order-main-box"}>
               <Box className={"order-box-scroll"}>
-                {order.orderItems?.map((item: OrderItem, index2: number) => {
+                {order.orderItems?.map((item: OrderItem) => {
+                  const product: Product | undefined = order.productData.find(
+                    (ele: Product) => item.productId === ele._id,
+                  );
+                  const imagePath = `${serverApi}/${product?.productImages[0]}`;
+
                   return (
                     <Box key={item._id} className={"orders-name-price"}>
                       <img
-                        src={"/img/kebab-fresh.webp"}
+                        src={imagePath}
                         className={"order-dish-img"}
+                        alt=""
                       />
-                      <p className={"title-dish"}>Kebab</p>
+                      <p className={"title-dish"}>{product?.productName}</p>
                       <Box className={"price-box"}>
                         <p>${item.itemPrice}</p>
-                        <img src={"/icons/close.svg"} />
+                        <img src={"/icons/close.svg"} alt="" />
                         <p>{item.itemQuantity}</p>
-                        <img src={"/icons/pause.svg"} />
+                        <img src={"/icons/pause.svg"} alt="" />
                         <p style={{ marginLeft: "15px" }}>
                           ${item.itemPrice * item.itemQuantity}
                         </p>
@@ -52,12 +57,17 @@ export default function FinishedOrders() {
                 <Box className={"box-total"}>
                   <p>Product price</p>
                   <p>${order.orderTotal - order.orderDelivery}</p>
-                  <img src={"/icons/plus.svg"} style={{ marginLeft: "20px" }} />
+                  <img
+                    src={"/icons/plus.svg"}
+                    style={{ marginLeft: "20px" }}
+                    alt=""
+                  />
                   <p>Delivery cost</p>
                   <p>${order.orderDelivery}</p>
                   <img
                     src={"/icons/pause.svg"}
                     style={{ marginLeft: "20px" }}
+                    alt=""
                   />
                   <p>Total</p>
                   <p>${order.orderTotal}</p>
@@ -67,19 +77,15 @@ export default function FinishedOrders() {
           );
         })}
 
-        {!finishedOrders ||
-          (finishedOrders.length === 0 && (
-            <Box
-              display={"flex"}
-              flexDirection={"row"}
-              justifyContent={"center"}
-            >
-              <img
-                src={"/icons/noimage-list.svg"}
-                style={{ width: 300, height: 300 }}
-              />
-            </Box>
-          ))}
+        {(!finishedOrders || finishedOrders.length === 0) && (
+          <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
+            <img
+              src={"/icons/noimage-list.svg"}
+              style={{ width: 300, height: 300 }}
+              alt=""
+            />
+          </Box>
+        )}
       </Stack>
     </TabPanel>
   );
